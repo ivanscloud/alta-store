@@ -21,4 +21,10 @@ func New(e *echo.Echo) {
 	eJwt.DELETE("/users/:id", controllers.DeleteUser)
 	eJwt.PUT("/users/:id", controllers.UpdateUser)
 
+	//-----------------products-------------------------
+	e.GET("/products", controllers.GetProductsController)
+	e.GET("/products/:id", controllers.GetProductController)
+	e.POST("/products", controllers.CreateProductController)
+	e.PUT("/products/:id", controllers.UpdateProductController)
+	e.DELETE("/products/:id", controllers.DeleteProductController)
 }

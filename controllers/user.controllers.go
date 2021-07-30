@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"alta-store/lib/database"
+	"alta-store/middlewares"
 	"alta-store/models"
 	"net/http"
 	"strconv"
@@ -82,5 +83,26 @@ func DeleteUser(c echo.Context) error {
 	}
 	return c.JSON(http.StatusOK, map[string]interface{}{
 		"message": "Data has been DELETED",
+	})
+}
+
+func GetUserDetailControllers(c echo.Context) error {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+	// ini dari JWT token yang dikirim via header
+	loggedInUserId := middlewares.ExtractTokenUserId(c)
+	// kalau loggedInUserId tidak sama dengan id yang dari parameter, kembalikan response 401
+	if loggedInUserId != id {
+		return echo.NewHTTPError(http.StatusUnauthorized, "unauthorized access, you can only see your own")
+	}
+	users, err := database.GetDetailUsers(id)
+	if err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"status": "success",
+		"users":  users,
 	})
 }
